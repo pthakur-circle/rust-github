@@ -25,4 +25,11 @@ jobs:
       run: cargo build
 
     - name: Run cargo audit
-      run: cargo audit 
+      run: |
+        cargo audit --json > audit_results.json
+        cargo audit --json | cargo-audit-sarif > results.sarif || echo "Failed to convert audit results to SARIF format."
+
+    - name: Upload SARIF results
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: results.sarif
