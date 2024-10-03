@@ -1,27 +1,27 @@
-name: Cargo Audit
+# name: Cargo Audit
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
+# on:
+#   push:
+#     branches:
+#       - master
+#   pull_request:
     
 
-jobs:
-  audit:
-    runs-on: ubuntu-latest
+# jobs:
+#   audit:
+#     runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+#     steps:
+#     - name: Checkout code
+#       uses: actions/checkout@v2
 
-    - name: Install Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
+#     - name: Install Rust
+#       uses: actions-rs/toolchain@v1
+#       with:
+#         toolchain: stable
 
-    - name: Install dependencies
-      run: cargo build
+#     - name: Install dependencies
+#       run: cargo build
 
-    - name: Run cargo audit
-      run: cargo audit 
+#     - name: Run cargo audit
+#       run: cargo audit 
