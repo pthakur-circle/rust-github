@@ -13,11 +13,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Rust
-        uses: rust-lang/rustup@v1
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
         with:
-          profile: minimal
-          rust-version: stable
+          toolchain: stable
 
       - name: Install cargo-tarpaulin
         run: cargo install cargo-tarpaulin
