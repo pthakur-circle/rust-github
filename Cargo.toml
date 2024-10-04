@@ -6,3 +6,5 @@ edition = "2021"
 [dependencies]
 tonic = "0.12.1" 
 ouch = "0.3.0" 
+rusqlite = "0.25"   
+rand = "0.8"  
