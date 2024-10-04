@@ -42,8 +42,12 @@ use std::thread;
 use std::sync::{Arc, Mutex};
 
 fn main() {
+    // Example of Passing Wrong Type / Unit Value
+    let unit_value = (); // This represents the unit value (an empty tuple)
+    risky_function(unit_value); // Passing a unit value (which might make no sense in a real scenario)
+
     // SQL Injection Example
-    let username = "John'; DROP TABLE users; --";  // Malicious input
+    let username = "John'; DROP TABLE users; --";  // Malicious input for SQL injection
     match query_user_by_username(username) {
         Ok(_) => println!("Query executed successfully."),
         Err(err) => eprintln!("Error: {}", err),
@@ -51,7 +55,7 @@ fn main() {
 
     // Improper Error Handling Example
     if let Err(err) = cause_error() {
-        eprintln!("Application error: {:?}", err);  // Sensitive information exposed
+        eprintln!("Application error: {:?}", err);  // Sensitive error information exposed
     }
 
     // Data Race Example with Threads
@@ -62,7 +66,7 @@ fn main() {
         let data_clone = Arc::clone(&data);
         let handle = thread::spawn(move || {
             let mut num = data_clone.lock().unwrap();
-            *num += 1;  // Potential data race if not properly synchronized
+            *num += 1;  // Data race could happen if not properly synchronized
         });
         handles.push(handle);
     }
@@ -82,9 +86,13 @@ fn main() {
 
     // Panic on Unwrap Example
     let value: Option<i32> = None;
-    // This will panic since value is None
-    let x = value.unwrap();
+    let x = value.unwrap();  // This will panic since value is None
     println!("Value: {}", x);
+}
+
+fn risky_function(_: ()) {
+    // Accepting unit value, which is generally not useful
+    eprintln!("Function accepted a unit value."); // Demonstrating risk without significance
 }
 
 fn query_user_by_username(username: &str) -> Result<()> {
