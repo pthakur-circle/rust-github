@@ -8,8 +8,7 @@ on:
     
 
 jobs:
-    miri:
-    name: "Miri"
+  miri:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
