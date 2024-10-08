@@ -4,8 +4,9 @@ on:
     branches:
       - master
     paths: 
-      - '../../Cargo.toml'
-      - '../../Cargo.lock'
+      - '.github/workflows/audit-check.yml'
+      - '**/Cargo.toml'
+      - '**/Cargo.toml'
 jobs:
   security_audit:
     runs-on: ubuntu-latest
