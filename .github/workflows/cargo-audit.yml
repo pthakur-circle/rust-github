@@ -41,7 +41,7 @@ jobs:
       - name: Install cargo audit
         run: cargo install cargo-audit
       - name: Run cargo audit and save JSON output
-        run: cargo audit --json > audit_report.json
+        run: cargo audit --json | tee audit_report.json
       - name: Convert JSON to SARIF
         run: |
           # Install Python if not available
