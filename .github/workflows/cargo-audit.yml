@@ -1,27 +1,108 @@
-name: Cargo Audit
+# name: Cargo Audit
 
-on:
+# on:
+#   push:
+#     branches:
+#       - master
+#   pull_request:
+    
+
+# jobs:
+#   audit:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: Checkout code
+#       uses: actions/checkout@v2
+
+#     - name: Install Rust
+#       uses: actions-rs/toolchain@v1
+#       with:
+#         toolchain: stable
+
+#     - name: Install dependencies
+#       run: cargo build
+
+#     - name: Run cargo audit
+#       run: cargo audit 
+
+
+name: Cargo Audit
+'on':
   push:
     branches:
       - master
-  pull_request:
-    
-
 jobs:
   audit:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install cargo audit
+        run: cargo install cargo-audit
+      - name: Run cargo audit and save JSON output
+        run: cargo audit --json > audit_report.json
+      - name: Convert JSON to SARIF
+        run: |
+          # Install Python if not available
+          sudo apt-get install python3
 
-    - name: Install Rust
-      uses: actions-rs/toolchain@v1
-      with:
-        toolchain: stable
+          # Python script to convert JSON to SARIF
+          python3 - <<'EOF' > audit_report.sarif
+          import json
+          import sys
 
-    - name: Install dependencies
-      run: cargo build
+          # Load the JSON output
+          with open('audit_report.json') as f:
+              data = json.load(f)
 
-    - name: Run cargo audit
-      run: cargo audit 
+          # Prepare the SARIF structure
+          sarif = {
+              "$schema": "http://json.schemastore.org/sarif-2.1.0",
+              "version": 2.1,
+              "runs": []
+          }
+
+          # Define details about the tool
+          tool = {
+              "driver": {
+                  "name": "cargo-audit",
+                  "informationUri": "https://rustsec.org",
+                  "version": "0.17.0",  # Replace with the current version
+              }
+          }
+
+          run = {
+              "tool": tool,
+              "results": []
+          }
+
+          # Add vulnerabilities to SARIF results
+          if data['vulnerabilities']['found']:
+              for vuln in data['vulnerabilities']['list']:
+                  result = {
+                      "ruleId": vuln['advisory']['id'],
+                      "level": "error",
+                      "locations": [{
+                          "physicalLocation": {
+                              "artifactLocation": {
+                                  "uri": "Cargo.lock"  # or relevant file
+                              }
+                          }
+                      }],
+                      "message": {
+                          "text": vuln['advisory']['description']  # Use the advisory description
+                      }
+                  }
+                  run["results"].append(result)
+
+          sarif['runs'].append(run)
+
+          # Write out to SARIF file
+          with open('audit_report.sarif', 'w') as f:
+              json.dump(sarif, f, indent=2)
+          EOF
+      - name: Upload SARIF report to GitHub Security
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: audit_report.sarif
