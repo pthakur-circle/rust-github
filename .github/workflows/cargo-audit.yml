@@ -103,6 +103,6 @@ jobs:
               json.dump(sarif, f, indent=2)
           EOF
       - name: Upload SARIF report to GitHub Security
-        uses: github/codeql-action/upload-sarif@v1
+        uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: audit_report.sarif
