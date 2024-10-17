@@ -80,24 +80,27 @@ jobs:
           # Add vulnerabilities to SARIF results
           if data['vulnerabilities']['found']:
               for vuln in data['vulnerabilities']['list']:
+                  advisory = vuln.get('advisory', {})
+                  ver = vuln.get('versions', {})
+                  affect = vuln.get('affected', {})
                   result = {
-                      "ruleId": vuln['advisory']['id'],
+                      "ruleId": advisory.get('id', 'unknown'),
                       "message": {
-                          "text": f"Security Alert: {vuln['advisory']['title']}"
+                          "text": f"Security Alert: {advisory.get('title'), 'No title available'}"
                       },
                       "level": "error",
                       "locations": [{
                           "physicalLocation": {
                               "artifactLocation": {
-                                  "uri": "Cargo.lock"  # or relevant file
+                                  "uri": "Cargo.lock"  
                               }
                           }
                       }],
                       "properties": {
-                          "description": vuln['advisory']['description'],  
-                          "affected_versions": vuln['affected']['functions'][0][0],
-                          "patched_versions": vuln['versions']['patched'],
-                          "url": vuln['advisory']['url'],
+                          "description": advisory.get('description', 'No Description Available'),  
+                          "affected_versions": affect.get('functions', "No affected "),
+                          "patched_versions": ver.get('patched'),
+                          "url": advisory.get('url', 'No URL Available'),
                           "severity": "Moderate",
                       }
                   }
