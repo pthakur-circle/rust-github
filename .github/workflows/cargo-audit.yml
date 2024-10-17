@@ -98,10 +98,33 @@ jobs:
                       }
                   }
                   run["results"].append(result)
+          
+          # Add warnings (unmaintained and unsound) to SARIF
+for kind in ['unmaintained', 'unsound']:
+    for warning in data['warnings'][kind]:
+        advisory = warning['advisory']
+        result = {
+            "ruleId": advisory['id'],
+            "level": "warning",
+            "locations": [{
+                "physicalLocation": {
+                    "artifactLocation": {
+                        "uri": f"{warning['package']['name']}/{warning['package']['version']}"  
+                    }
+                }
+            }],
+            "message": {
+                "text": f"Warning: {advisory['title']}"
+            },
+            "properties": {
+                "description": advisory['description'],
+                "url": advisory['url']  
+            }
+        }
+        run["results"].append(result)
 
           sarif['runs'].append(run)
 
-          # Write out to SARIF file
           with open('audit_report.sarif', 'w') as f:
               json.dump(sarif, f, indent=2)
           EOF
