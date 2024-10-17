@@ -82,6 +82,9 @@ jobs:
               for vuln in data['vulnerabilities']['list']:
                   result = {
                       "ruleId": vuln['advisory']['id'],
+                      "message": {
+                          "text": f"Security Alert: {vuln['advisory']['title']}"
+                      },
                       "level": "error",
                       "locations": [{
                           "physicalLocation": {
@@ -90,8 +93,8 @@ jobs:
                               }
                           }
                       }],
-                      "message": {
-                          "text": vuln['advisory']['description']  # Use the advisory description
+                      "properties": {
+                          "description": vuln['advisory']['description']  # Use the advisory description
                       }
                   }
                   run["results"].append(result)
