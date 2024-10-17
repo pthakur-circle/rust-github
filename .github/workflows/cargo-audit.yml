@@ -94,11 +94,11 @@ jobs:
                           }
                       }],
                       "properties": {
-                          "description": vuln['advisory']['description']  
-                          "affected_versions": vuln['affected']['functions'][0][0]
-                          "patched_versions": vuln['versions']['patched']
-                          "url": vuln['advisory']['url']
-                          "severity": "Moderate"
+                          "description": vuln['advisory']['description'],  
+                          "affected_versions": vuln['affected']['functions'][0][0],
+                          "patched_versions": vuln['versions']['patched'],
+                          "url": vuln['advisory']['url'],
+                          "severity": "Moderate",
                       }
                   }
                   run["results"].append(result)
